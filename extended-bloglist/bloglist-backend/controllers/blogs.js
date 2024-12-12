@@ -3,7 +3,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const middleware = require("../utils/middleware");
-const Comment = require("../models/comment");
 
 blogsRouter.get("/", async (request, response) => {
   try {
@@ -112,35 +111,6 @@ blogsRouter.get("/:id", (request, response, next) => {
       }
     })
     .catch((error) => next(error));
-});
-
-blogsRouter.post("/:id/comments", async (req, res) => {
-  const { id } = req.params;
-  const { text } = req.body;
-
-  if (!text) {
-    return res.status(400).json({ error: "Comment text is required" });
-  }
-
-  try {
-    const blog = await Blog.findById(id);
-    if (!blog) {
-      return res.status(404).json({ error: "Blog not found" });
-    }
-
-    const comment = new Comment({
-      text,
-      blog: blog._id,
-    });
-
-    const savedComment = await comment.save();
-    blog.comments.push(savedComment._id);
-    await blog.save();
-
-    res.status(201).json(savedComment);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to add comment" });
-  }
 });
 
 module.exports = blogsRouter;
