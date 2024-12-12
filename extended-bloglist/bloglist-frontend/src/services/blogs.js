@@ -49,10 +49,28 @@ const getById = async (id) => {
   return request.then((response) => response.data);
 };
 
-const addComment = async (blogId, commentText) => {
-  const response = await axios.post(`/api/blogs/${blogId}/comments`, {
-    text: commentText,
-  });
+const addComment = async (blogId, content) => {
+  const config = {
+    headers: {
+      Authorization: token, // Ensure Authorization token is passed
+      'Content-Type': 'application/json', // Explicitly set Content-Type
+    },
+  };
+  console.log('Adding comment ID', blogId);
+  console.log('Adding comment with content:', content);
+  const response = await axios.post(
+    `${baseUrl}/${blogId}/comments`,
+    {
+      content,
+    },
+    config,
+  );
+  return response.data;
+};
+
+const getComments = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}/comments`);
+  console.log(response.data, 'response data getComments');
   return response.data;
 };
 
@@ -64,4 +82,5 @@ export default {
   setToken,
   getById,
   addComment,
+  getComments,
 };

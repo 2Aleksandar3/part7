@@ -5,13 +5,13 @@ import blogService from './services/blogs';
 import loginService from './services/login';
 import Notification from './components/notification';
 import BlogForm from './components/BlogForm';
-import { useUser } from './context/UserContext'; // Import the context
+import { useUser } from './context/UserContext';
 import UsersView from './components/UsersView';
 import UserView from './components/UserView';
 import BlogView from './components/BlogView';
 
 const App = () => {
-  const { state, setUser, logoutUser, setError } = useUser(); // Use context here
+  const { state, setUser, logoutUser, setError } = useUser();
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -31,17 +31,17 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user); // Dispatch to context
+      setUser(user);
       blogService.setToken(user.token);
     }
-  }, []); // Add setUser as dependency for useEffect
+  }, []);
 
   // Function to show notifications
   const showNotification = (message, type) => {
     setNotification({ message, type });
     setTimeout(() => {
       setNotification({ message: '', type: '' });
-    }, 5000); // Notification disappears after 5 seconds
+    }, 5000);
   };
 
   // Handle login functionality
@@ -57,11 +57,11 @@ const App = () => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
 
       blogService.setToken(user.token);
-      setUser(user); // Dispatch to context
+      setUser(user);
       setUsername('');
       setPassword('');
     } catch (exception) {
-      setError('Wrong credentials'); // Dispatch error to context
+      setError('Wrong credentials');
       showNotification('Wrong credentials', 'error');
       setTimeout(() => {
         setError(null);
@@ -91,17 +91,16 @@ const App = () => {
     }
   };
 
-  // Handle liking a blog
   const handleLike = async (blog) => {
     const updatedBlog = {
       ...blog,
-      likes: blog.likes + 1, // Increment likes
-      user: blog.user.id, // Ensure user ID is attached to the updated blog
+      likes: blog.likes + 1,
+      user: blog.user.id,
     };
     setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
     try {
-      const returnedBlog = await blogService.update(updatedBlog); // Update the blog
-      setBlogs(blogs.map((b) => (b.id === returnedBlog.id ? returnedBlog : b))); // Update state with the new blog
+      const returnedBlog = await blogService.update(updatedBlog);
+      setBlogs(blogs.map((b) => (b.id === returnedBlog.id ? returnedBlog : b)));
       showNotification('Blog liked successfully', 'success');
     } catch (exception) {
       setError('Error liking blog');
@@ -111,11 +110,10 @@ const App = () => {
     }
   };
 
-  // Handle deleting a blog
   const handleDelete = async (blog) => {
     try {
       await blogService.deleteBlog(blog.id);
-      setBlogs(blogs.filter((b) => b.id !== blog.id)); // Remove the blog from state
+      setBlogs(blogs.filter((b) => b.id !== blog.id));
       showNotification(`Blog "${blog.title}" deleted successfully`, 'success');
     } catch (exception) {
       setError('Error deleting blog');

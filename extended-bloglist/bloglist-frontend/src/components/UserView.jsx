@@ -47,7 +47,6 @@ const UserView = () => {
           <tr>
             <th>Title</th>
             <th>Author</th>
-            <th>Likes</th>
           </tr>
         </thead>
         <tbody>
@@ -55,7 +54,6 @@ const UserView = () => {
             <tr key={blog.id}>
               <td>{blog.title}</td>
               <td>{blog.author}</td>
-              <td>{blog.likes}</td>
             </tr>
           ))}
         </tbody>
