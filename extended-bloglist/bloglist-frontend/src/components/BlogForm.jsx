@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { TextField, Button, Typography, Box } from '@mui/material';
 
 const BlogForm = ({ addBlog, showNotification }) => {
   const [title, setTitle] = useState('');
@@ -16,36 +17,52 @@ const BlogForm = ({ addBlog, showNotification }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        title:
-        <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:
-        <input
-          type="text"
-          value={author}
-          name="Author"
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
-        <input
-          type="text"
-          value={url}
-          name="Url"
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type="submit">submit</button>
-    </form>
+    <Box sx={{ maxWidth: 400, margin: '0 auto' }}>
+      <Typography variant="h5" gutterBottom>
+        Create a New Blog
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <TextField
+            label="Title"
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+          />
+        </div>
+        <div>
+          <TextField
+            label="Author"
+            value={author}
+            onChange={({ target }) => setAuthor(target.value)}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+          />
+        </div>
+        <div>
+          <TextField
+            label="URL"
+            value={url}
+            onChange={({ target }) => setUrl(target.value)}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+          />
+        </div>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          fullWidth
+        >
+          Submit
+        </Button>
+      </form>
+    </Box>
   );
 };
 

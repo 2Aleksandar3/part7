@@ -9,6 +9,17 @@ import { useUser } from './context/UserContext';
 import UsersView from './components/UsersView';
 import UserView from './components/UserView';
 import BlogView from './components/BlogView';
+import {
+  Container,
+  createTheme,
+  ThemeProvider,
+  Button,
+  Box,
+  Typography,
+  TextField,
+  AppBar,
+  Toolbar,
+} from '@mui/material';
 
 const App = () => {
   const { state, setUser, logoutUser, setError } = useUser();
@@ -17,6 +28,23 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [newBlogVisible, setNewBlogVisible] = useState(false);
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        light: '#757ce8',
+        main: '#3f50b5',
+        dark: '#002884',
+        contrastText: '#fff',
+      },
+      secondary: {
+        light: '#ff7961',
+        main: '#f44336',
+        dark: '#ba000d',
+        contrastText: '#000',
+      },
+    },
+  });
 
   // Fetch all blogs on initial render
   useEffect(() => {
@@ -128,98 +156,138 @@ const App = () => {
     const hideWhenVisible = { display: newBlogVisible ? 'none' : '' };
     const showWhenVisible = { display: newBlogVisible ? '' : 'none' };
     return (
-      <div>
-        <h2>add new blog</h2>
+      <Box>
+        <Typography variant="h5">Add New Blog</Typography>
         <div style={hideWhenVisible}>
-          <button onClick={() => setNewBlogVisible(true)}>add blog</button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setNewBlogVisible(true)}
+          >
+            Add Blog
+          </Button>
         </div>
         <div style={showWhenVisible}>
           <BlogForm addBlog={addBlog} showNotification={showNotification} />
-          <button onClick={() => setNewBlogVisible(false)}>cancel</button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => setNewBlogVisible(false)}
+          >
+            Cancel
+          </Button>
         </div>
-      </div>
+      </Box>
     );
   };
 
   // If no user is logged in, show the login form
   if (!state.user) {
     return (
-      <div>
+      <Container>
         <Notification message={notification.message} type={notification.type} />
-        <h2>Log in to application</h2>
-        <form onSubmit={handleLogin}>
-          <div>
-            username:
-            <input
-              type="text"
+        <Box>
+          <Typography variant="h5">Log in to application</Typography>
+          <form onSubmit={handleLogin}>
+            <TextField
+              label="Username"
               value={username}
-              name="Username"
               onChange={({ target }) => setUsername(target.value)}
+              fullWidth
+              margin="normal"
             />
-          </div>
-          <div>
-            password:
-            <input
+            <TextField
+              label="Password"
               type="password"
               value={password}
-              name="Password"
               onChange={({ target }) => setPassword(target.value)}
+              fullWidth
+              margin="normal"
             />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Log in
+            </Button>
+          </form>
+        </Box>
+      </Container>
     );
   }
 
   // If user is logged in, show the blogs
   return (
-    <Router>
-      <div>
-        <Notification message={notification.message} type={notification.type} />
-        <h2>blogs</h2>
-        <p>{state.user.name} logged-in</p>
-        <Link to="/users">Users View </Link>
+    <Container>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <div>
+            <AppBar position="sticky">
+              <Toolbar>
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  Blog Application
+                </Typography>
+                <Button color="inherit" onClick={handleLogout}>
+                  Log out
+                </Button>
+              </Toolbar>
+            </AppBar>
+            <Box mt={2}>
+              <Notification
+                message={notification.message}
+                type={notification.type}
+              />
+              <Typography variant="h4">Blogs</Typography>
+              <Typography variant="subtitle1">
+                {state.user.name} logged in
+              </Typography>
+              <Box mt={2} mb={2}>
+                <Link to="/users" style={{ marginRight: 10 }}>
+                  <Button variant="outlined" color="primary">
+                    Users View
+                  </Button>
+                </Link>
+                <Link to="/" style={{ marginRight: 10 }}>
+                  <Button variant="outlined" color="primary">
+                    Blog View
+                  </Button>
+                </Link>
+              </Box>
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <>
+                      {newBlogForm()}
+                      {blogs
+                        .sort((a, b) => b.likes - a.likes)
+                        .map((blog) => (
+                          <Box key={blog.id} mb={2}>
+                            <Link to={`/blogs/${blog.id}`}>
+                              <Blog
+                                blog={blog}
+                                handleLike={handleLike}
+                                handleDelete={handleDelete}
+                                user={state.user}
+                              />
+                            </Link>
+                          </Box>
+                        ))}
+                    </>
+                  }
+                />
 
-        <Link to="/"> Blog View</Link>
-        <br />
-        <button onClick={handleLogout}>Log out</button>
+                <Route path="/users" element={<UsersView />} />
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                {newBlogForm()}
-                {blogs
-                  .sort((a, b) => b.likes - a.likes)
-                  .map((blog) => (
-                    <div key={blog.id}>
-                      <Link to={`/blogs/${blog.id}`}>
-                        <Blog
-                          blog={blog}
-                          handleLike={handleLike}
-                          handleDelete={handleDelete}
-                          user={state.user}
-                        />
-                      </Link>
-                    </div>
-                  ))}
-              </>
-            }
-          />
+                <Route path="/users/:userId" element={<UserView />} />
 
-          <Route path="/users" element={<UsersView />} />
-
-          <Route path="/users/:userId" element={<UserView />} />
-
-          <Route
-            path="/blogs/:id"
-            element={<BlogView handleLike={handleLike} />}
-          />
-        </Routes>
-      </div>
-    </Router>
+                <Route
+                  path="/blogs/:id"
+                  element={<BlogView handleLike={handleLike} />}
+                />
+              </Routes>
+            </Box>
+          </div>
+        </Router>
+      </ThemeProvider>
+    </Container>
   );
 };
 

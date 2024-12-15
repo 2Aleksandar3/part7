@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Button, Box, Typography, Paper } from '@mui/material';
 
 const Blog = ({ blog, handleLike, handleDelete, user }) => {
   const [visible, setVisible] = useState(false);
@@ -30,29 +31,60 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
         {visible ? 'hide' : 'view'}
       </button>*/
   return (
-    <div style={blogStyle} className="blog" data-id={blog._id}>
-      <div className="blog-title">
-        {blog.title} by {blog.author}
-      </div>
+    <Box sx={{ marginBottom: 2 }}>
+      <Paper sx={{ padding: 2, border: '1px solid #ccc' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h6">
+            {blog.title} by {blog.author}
+          </Typography>
+        </Box>
 
-      {visible && (
-        <div className="blog-details">
-          <div className="blog-url">URL: {blog.url}</div>
-          <div className="blog-likes">likes: {blog.likes}</div>
-          <button type="button" onClick={likeBlog} className="like-button">
-            like
-          </button>
-          <div className="blog-user">
-            User: {blog.user ? blog.user.username : 'Unknown User'}
-          </div>
-          {blog.user && blog.user._id === user.id && (
-            <button onClick={deleteBlog} className="delete-button">
-              delete
-            </button>
-          )}
-        </div>
-      )}
-    </div>
+        {visible && (
+          <Box sx={{ marginTop: 2 }}>
+            <Typography variant="body1" paragraph>
+              <strong>URL:</strong>{' '}
+              <a href={blog.url} target="_blank" rel="noopener noreferrer">
+                {blog.url}
+              </a>
+            </Typography>
+            <Typography variant="body1" paragraph>
+              <strong>Likes:</strong> {blog.likes}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={likeBlog}
+              sx={{ marginRight: 2 }}
+            >
+              Like
+            </Button>
+            {blog.user && blog.user._id === user.id && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={deleteBlog}
+              >
+                Delete
+              </Button>
+            )}
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ marginTop: 2 }}
+            >
+              <strong>Added by:</strong>{' '}
+              {blog.user ? blog.user.username : 'Unknown User'}
+            </Typography>
+          </Box>
+        )}
+      </Paper>
+    </Box>
   );
 };
 

@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import userService from '../services/userService';
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+} from '@mui/material';
 
 const UserView = () => {
   const { userId } = useParams();
@@ -41,23 +52,32 @@ const UserView = () => {
   // Render user data once it's fetched successfully
   return (
     <div>
-      <h2>{user.username}'s Blog Posts</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-          </tr>
-        </thead>
-        <tbody>
-          {user.blogs.map((blog) => (
-            <tr key={blog.id}>
-              <td>{blog.title}</td>
-              <td>{blog.author}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Typography variant="h4" gutterBottom>
+        {user.username}'s Blog Posts
+      </Typography>
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <strong>Title</strong>
+              </TableCell>
+              <TableCell align="right">
+                <strong>Author</strong>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {user.blogs.map((blog) => (
+              <TableRow key={blog.id}>
+                <TableCell>{blog.title}</TableCell>
+                <TableCell align="right">{blog.author}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

@@ -15,7 +15,7 @@ const Notification = ({ message, type }) => {
     top: '10px',
     left: '50%',
     transform: 'translateX(-50%)',
-    zIndex: 1000,
+    zIndex: 1300,
   };
 
   return <div style={notificationStyle}>{message}</div>;
